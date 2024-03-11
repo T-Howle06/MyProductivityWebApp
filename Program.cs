@@ -19,7 +19,13 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
-builder.Services.AddSingleton<WeatherForecastService>();
+// Scoped created an instance for each user
+builder.Services.AddScoped<WeatherForecastService>();
+// Read the connection string from the appsettings.json file
+// Set the database connection for the MyProductivityWebAppContext
+builder.Services.AddDbContext<MyProductivityWebApp.Data.Data.MyProductivityWebAppContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 var app = builder.Build();
 
