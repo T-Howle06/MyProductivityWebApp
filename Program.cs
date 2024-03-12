@@ -21,6 +21,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 // Scoped created an instance for each user
 builder.Services.AddScoped<WeatherForecastService>();
+builder.Services.AddScoped<ToDoListService>();
 // Read the connection string from the appsettings.json file
 // Set the database connection for the MyProductivityWebAppContext
 builder.Services.AddDbContext<MyProductivityWebApp.Data.Data.MyProductivityWebAppContext>(options =>

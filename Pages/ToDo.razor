@@ -1,0 +1,96 @@
+﻿@page "/todo"
+@using MyProductivityWebApp.Data
+@using MyProductivityWebApp.Data.Data
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inherits OwningComponentBase<ToDoListService>
+
+<PageTitle>To-do</PageTitle>
+
+<h1>To-Do</h1>
+
+<AuthorizeView>
+    <Authorized>
+        <h2>Showing tasks for: @context.User.Identity?.Name.</h2>
+        <p>This page is currently being developed... check back soon!</p>
+
+
+    </Authorized>
+    <NotAuthorized>
+        <h2>Login to see your tasks or register to get started keeping track of your tasks!</h2>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationStateTask { get; set; }
+
+    List<ToDoList> toDoLists = new List<ToDoList>();
+
+    private string usernameIdentity = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the current user
+        if (authenticationStateTask != null)
+        {
+            var user = (await authenticationStateTask).User;
+
+            if (user.Identity != null)
+            {
+                usernameIdentity = user.Identity.Name ?? "";
+            }
+        }
+
+        toDoLists = await @Service.GetToDoListsAsync(usernameIdentity);
+    }
+
+    ToDoList toDoList = new ToDoList();
+
+    bool ShowPopup = false;
+
+    void ClosePopup()
+    {
+        ShowPopup = false;
+    }
+
+    void AddNewToDoList()
+    {
+        toDoList = new ToDoList();
+        toDoList.Id = 0;
+        ShowPopup = true;
+    }
+
+    async Task SaveToDoList()
+    {
+        ShowPopup = false;
+        if (toDoList.Id == 0)
+        {
+            ToDoList newToDoList = new ToDoList();
+            newToDoList.Title = toDoList.Title;
+            newToDoList.Description = toDoList.Description;
+            newToDoList.DueDate = toDoList.DueDate;
+            newToDoList.UserName = usernameIdentity;
+
+            var result = @Service.CreateToDoListAsync(newToDoList);
+        }
+        else
+        {
+            var result = @Service.CreateToDoListAsync(toDoList);
+        }
+
+        toDoLists = await @Service.GetToDoListsAsync(usernameIdentity);
+    }
+
+    void EditToDoList(ToDoList selectedToDoList)
+    {
+        toDoList = selectedToDoList;
+        ShowPopup = true;
+    }
+
+    async Task DeleteToDoList()
+    {
+        ShowPopup = false;
+        var result = @Service.DeleteToDoListAsync(toDoList);
+        toDoLists = await @Service.GetToDoListsAsync(usernameIdentity);
+    }
+}

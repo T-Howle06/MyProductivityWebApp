@@ -1,9 +1,20 @@
 ﻿@page "/"
+@using MyProductivityWebApp.Data
+@using MyProductivityWebApp.Data.Data
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<AuthorizeView>
+    <Authorized>
+        <h1>Welcome back, @context.User.Identity?.Name!</h1>
+        <SurveyPrompt Title="What do you think of the myProductivity web application?" />
+        <p>This home page is currently being developed to show your recent tasks and notes!</p>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Welcome to myProductivity!</h1>
+        <p>Create an account to get started with your productivity today!</p>
+    </NotAuthorized>
+</AuthorizeView>
 
-Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />

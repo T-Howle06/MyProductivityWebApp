@@ -16,6 +16,10 @@
    "T4TemplatePath": null,
    "Tables": [
       {
+         "Name": "[dbo].[ToDoList]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[WeatherForecast]",
          "ObjectType": 0
       }

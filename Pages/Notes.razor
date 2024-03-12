@@ -1,0 +1,22 @@
+﻿@page "/notes"
+@using MyProductivityWebApp.Data
+@using MyProductivityWebApp.Data.Data
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>Notes</PageTitle>
+
+<h1>Notes</h1>
+
+<AuthorizeView>
+    <Authorized>
+        <h2>Showing notes for: @context.User.Identity?.Name.</h2>
+        <p>This page is currently being developed... check back soon!</p>
+    </Authorized>
+    <NotAuthorized>
+        <h2>Login to see your notes or register to get started remembering that important detail!</h2>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}
