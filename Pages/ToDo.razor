@@ -11,14 +11,71 @@
 <AuthorizeView>
     <Authorized>
         <h2>Showing tasks for: @context.User.Identity?.Name.</h2>
-        <p>This page is currently being developed... check back soon!</p>
 
-
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Due Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var toDoList in toDoLists)
+                {
+                    <tr>
+                        <td>@toDoList.Title</td>
+                        <td>@toDoList.Description</td>
+                        <td>@toDoList.DueDate?.ToShortDateString()</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="(() => EditToDoList(toDoList))">Edit</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p>
+            <!-- Add a new task -->
+            <button class="btn btn-success" @onclick="AddNewToDoList">Add New Task</button>
+        </p>
     </Authorized>
     <NotAuthorized>
         <h2>Login to see your tasks or register to get started keeping track of your tasks!</h2>
     </NotAuthorized>
 </AuthorizeView>
+
+@if (ShowPopup)
+{
+    <!-- This is the popup to create or edit a task -->
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Edit Task</h3>
+                    <!-- Button to close the popup -->
+                    <button type="button" class="close" @onclick="ClosePopup">
+                        <span aria-hidden="true">X</span>
+                    </button>
+                </div>
+                <!-- Edit form for the current task -->
+                <div class="modal-body">
+                    <input class="form-control" type="text" placeholder="Title" @bind="toDoList.Title" />
+                    <input class="form-control" type="text" placeholder="Description" @bind="toDoList.Description" />
+                    <input class="form-control" type="date" placeholder="Due Date" @bind="toDoList.DueDate" />
+                    <br />
+                    <!-- Button to save the task -->
+                    <button class="btn btn-success" @onclick="SaveToDoList">Save</button>&nbsp;
+                    <!-- Only show delete button if not a new record -->
+                    @if (toDoList.Id > 0)
+                    {
+                        <!-- Button to delete the task -->
+                        <button class="btn btn-danger" @onclick="DeleteToDoList">Delete</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [CascadingParameter]
