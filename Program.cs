@@ -22,6 +22,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuth
 // Scoped created an instance for each user
 builder.Services.AddScoped<WeatherForecastService>();
 builder.Services.AddScoped<ToDoListService>();
+builder.Services.AddScoped<NoteService>();
 // Read the connection string from the appsettings.json file
 // Set the database connection for the MyProductivityWebAppContext
 builder.Services.AddDbContext<MyProductivityWebApp.Data.Data.MyProductivityWebAppContext>(options =>

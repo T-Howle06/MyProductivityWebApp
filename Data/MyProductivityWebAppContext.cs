@@ -18,11 +18,17 @@ namespace MyProductivityWebApp.Data.Data
         {
         }
 
+        public virtual DbSet<Note> Notes { get; set; }
         public virtual DbSet<ToDoList> ToDoLists { get; set; }
         public virtual DbSet<WeatherForecast> WeatherForecasts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Note>(entity =>
+            {
+                entity.Property(e => e.UserName).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<ToDoList>(entity =>
             {
                 entity.ToTable("ToDoList");

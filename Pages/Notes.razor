@@ -2,6 +2,7 @@
 @using MyProductivityWebApp.Data
 @using MyProductivityWebApp.Data.Data
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inherits OwningComponentBase<NoteService>
 
 <PageTitle>Notes</PageTitle>
 
@@ -10,13 +11,140 @@
 <AuthorizeView>
     <Authorized>
         <h2>Showing notes for: @context.User.Identity?.Name.</h2>
-        <p>This page is currently being developed... check back soon!</p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Contents</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var note in notes)
+                {
+                    <tr>
+                        <td>@note.Title</td>
+                        <td>@note.Contents</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="(() => EditNote(note))">Edit</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p>
+            <!-- Add a new note -->
+            <button class="btn btn-success" @onclick="AddNewNote">Add New Note</button>
+        </p>
     </Authorized>
     <NotAuthorized>
         <h2>Login to see your notes or register to get started remembering that important detail!</h2>
     </NotAuthorized>
 </AuthorizeView>
 
-@code {
+@if (ShowPopup)
+{
+    <!-- This is the popup to create or edit a note -->
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Edit Note</h3>
+                    <!-- Button to close the popup -->
+                    <button type="button" class="close" @onclick="ClosePopup">
+                        <span aria-hidden="true">X</span>
+                    </button>
+                </div>
+                <!-- Edit form for the current note -->
+                <div class="modal-body">
+                    <input class="form-control" type="text" placeholder="Title" @bind="note.Title" />
+                    <textarea style="width: 100%" placeholder="Content" @bind="note.Contents"></textarea>
+                    <br />
+                    <!-- Button to save the task -->
+                    <button class="btn btn-success" @onclick="SaveNote">Save</button>
+                    <!-- Only show delete button if not a new record -->
+                    @if (note.Id > 0)
+                    {
+                            <!-- Button to delete the note -->
+                            <button class="btn btn-danger" @onclick="DeleteNote">Delete</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationStateTask { get; set; }
+
+    List<Note> notes = new List<Note>();
+
+    private string usernameIdentity = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Get the current user
+        if (authenticationStateTask != null)
+        {
+            var user = (await authenticationStateTask).User;
+
+            if (user.Identity != null)
+            {
+                usernameIdentity = user.Identity.Name ?? "";
+            }
+        }
+
+        notes = await @Service.GetNotesAsync(usernameIdentity);
+    }
+
+    Note note = new Note();
+
+    bool ShowPopup = false;
+
+    void ClosePopup()
+    {
+        ShowPopup = false;
+    }
+
+    void AddNewNote()
+    {
+        note = new Note();
+        note.Id = 0;
+        ShowPopup = true;
+    }
+
+    async Task SaveNote()
+    {
+        ShowPopup = false;
+
+        if (note.Id == 0)
+        {
+            Note newNote = new Note();
+            newNote.Title = note.Title;
+            newNote.Contents = note.Contents;
+            newNote.UserName = usernameIdentity;
+
+            var result = @Service.CreateNotesAsync(newNote);
+        }
+        else
+        {
+            var result = @Service.UpdateNotesAsync(note);
+        }
+
+        notes = await @Service.GetNotesAsync(usernameIdentity);
+    }
+
+    void EditNote(Note selectedNote)
+    {
+        note = selectedNote;
+        ShowPopup = true;
+    }
+
+    async Task DeleteNote()
+    {
+        ShowPopup = false;
+        var result = @Service.DeleteNotesAsync(note);
+        notes = await @Service.GetNotesAsync(usernameIdentity);
+    }
 }

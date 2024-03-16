@@ -120,6 +120,7 @@
     async Task SaveToDoList()
     {
         ShowPopup = false;
+
         if (toDoList.Id == 0)
         {
             ToDoList newToDoList = new ToDoList();
@@ -132,7 +133,7 @@
         }
         else
         {
-            var result = @Service.CreateToDoListAsync(toDoList);
+            var result = @Service.UpdateToDoListAsync(toDoList);
         }
 
         toDoLists = await @Service.GetToDoListsAsync(usernameIdentity);

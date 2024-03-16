@@ -16,6 +16,10 @@
    "T4TemplatePath": null,
    "Tables": [
       {
+         "Name": "[dbo].[Notes]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[ToDoList]",
          "ObjectType": 0
       },

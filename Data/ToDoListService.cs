@@ -32,7 +32,7 @@ namespace MyProductivityWebApp.Data
             var ExistingToDoList = _myProductivityWebAppContext.ToDoLists
                 .Where(t => t.Id == toDoList.Id)
                 .FirstOrDefault();
-
+    
             if (ExistingToDoList != null)
             {
                 ExistingToDoList.Title = toDoList.Title;
