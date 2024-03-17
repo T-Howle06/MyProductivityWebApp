@@ -1,0 +1,21 @@
+﻿@page "/timetable"
+@using MyProductivityWebApp.Data
+@using MyProductivityWebApp.Data.Data
+
+<PageTitle>Timetable</PageTitle>
+
+<h1>Timetable</h1>
+
+<AuthorizeView>
+    <Authorized>
+        <h2>Showing timetable for: @context.User.Identity?.Name.</h2>
+        <p>This page is currently being developed...check back soon!</p>
+    </Authorized>
+    <NotAuthorized>
+        <h2>Login to see your timetable or register to get started keeping track of your days!</h2>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

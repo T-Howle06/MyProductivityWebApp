@@ -1,6 +1,7 @@
 ﻿@page "/todo"
 @using MyProductivityWebApp.Data
 @using MyProductivityWebApp.Data.Data
+@using System.Linq
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inherits OwningComponentBase<ToDoListService>
 
@@ -37,6 +38,8 @@
         <p>
             <!-- Add a new task -->
             <button class="btn btn-success" @onclick="AddNewToDoList">Add New Task</button>
+            <!-- Sort tasks -->
+            <button class="btn btn-success" @onclick="SortToDoList">Sort Tasks</button>
         </p>
     </Authorized>
     <NotAuthorized>
@@ -99,6 +102,7 @@
         }
 
         toDoLists = await @Service.GetToDoListsAsync(usernameIdentity);
+        SortToDoList();
     }
 
     ToDoList toDoList = new ToDoList();
@@ -150,5 +154,10 @@
         ShowPopup = false;
         var result = @Service.DeleteToDoListAsync(toDoList);
         toDoLists = await @Service.GetToDoListsAsync(usernameIdentity);
+    }
+
+    void SortToDoList()
+    {
+        toDoLists = toDoLists.OrderBy(t => t.DueDate).ToList();
     }
 }
